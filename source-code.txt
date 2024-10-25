@@ -1,0 +1,84 @@
+# Sentiment Analysis (Using Python)
+# !pip install transformers
+
+from transformers import pipeline
+# sentiment_analysis = pipeline("sentiment-analysis")
+sentiment_analysis = pipeline("text-classification", model="distilbert/distilbert-base-uncased-finetuned-sst-2-english")
+
+text = "This movie was absolutely fantastic!"
+
+sentiment = sentiment_analysis(text)
+print(f"Sentiment for '{text}':{sentiment[0]['label']}")
+
+# ----------------------------------------------------------------------------------
+
+
+# Translation (Python)
+# !pip install transformers
+from transformers import pipeline
+
+# Load the translation pipeline
+translator = pipeline("translation_en_to_zh", model="Helsinki-NLP/opus-mt-en-zh")
+
+# Example text to translate
+text = "Hello, how are you?"
+
+# Perform the translation
+translated_text = translator(text, max_length=40)
+
+# Print the translated text
+print(translated_text[0]['translation_text'])
+
+# ----------------------------------------------------------------------------------
+
+
+# Text Generation (Python)
+# !pip install transformers
+from transformers import pipeline
+
+generator = pipeline('text-generation', model='gpt2')
+
+prompt = "The future of AI is"
+generated_text = generator(prompt, max_length=30)[0]['generated_text']
+
+print(generated_text)
+
+# ----------------------------------------------------------------------------------
+
+
+# OpenAI 
+# Install and import OpenAI Python library
+# !pip install openai --upgrade
+# !pip install openai
+# from openai import AzureOpenAI
+
+from google.colab import userdata
+import os
+import requests
+import json
+
+url = userdata.get('CUHK_ENDPOINT')
+
+payload = json.dumps({
+    "model": "gpt-35-turbo",
+    "messages": [
+        {
+            "role": "system",
+            "content": "You will be provided with a message, and your task is to respond using emojis only."
+        },
+        {
+            "role": "user",
+            "content": "I am happy!"
+        }
+    ]
+})
+headers = {
+    'Content-Type': 'application/json',
+    'Cache-Control': 'no-cache',
+#    'Ocp-Apim-Subscription-Key': os.getenv("APIM_Subscription_KEY")
+    'Ocp-Apim-Subscription-Key': userdata.get('APIM_Subscription_KEY')
+}
+
+response = requests.request("POST", url, headers=headers, data=payload)
+
+print(response.text)
